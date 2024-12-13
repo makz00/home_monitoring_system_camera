@@ -84,10 +84,12 @@ static int send_whole_message(int sock, camera_fb_t *fb, struct sockaddr_in *des
             return -1;
         }
 
-        // Forced delay as receiver side cannot handle a lot of Frame Buffers in short time
-        const TickType_t xDelayMs = pdMS_TO_TICKS(10UL);
-        vTaskDelay(xDelayMs);
+        // const TickType_t xDelayMs = pdMS_TO_TICKS(3UL);
+        // vTaskDelay(xDelayMs);
     }
+    // Forced delay as receiver side cannot handle a lot of Frame Buffers in short time
+    // const TickType_t xDelayMs = pdMS_TO_TICKS(40UL);
+    // vTaskDelay(xDelayMs);
 
     return 1;
 }
