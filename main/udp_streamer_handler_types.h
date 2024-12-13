@@ -33,5 +33,4 @@ typedef struct
 typedef struct
 {
     struct in_addr stream_receiver_ip;
-    in_port_t stream_receiver_port;
 } stream_receiver_addr_t;

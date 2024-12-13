@@ -124,7 +124,7 @@ static void pass_receiver_address(struct sockaddr_in *source_addr)
 {
     stream_receiver_addr_t receiver_addr = {
         .stream_receiver_ip = source_addr->sin_addr,
-        .stream_receiver_port = htons(5002)}; // Should be source_addr->sin_port
+    };
     BaseType_t xStatus;
 
     xStatus = xQueueSendToBack(xQueue, &receiver_addr, 0);

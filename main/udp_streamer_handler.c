@@ -14,7 +14,7 @@
 
 #define UDPS_SENDER_PRIORITY 5
 #define UDPS_CONTROL_PRIORITY 5
-#define MAX_UDPS_RECEIERS 1
+#define MAX_UDPS_RECEIVERS 1
 
 #include "esp_err.h"
 #include "esp_log.h"
@@ -37,7 +37,7 @@ QueueHandle_t xQueue;
 
 esp_err_t udp_streamer_handler_handler_camera_queue_init()
 {
-    xQueue = xQueueCreate(MAX_UDPS_RECEIERS, sizeof(stream_receiver_addr_t));
+    xQueue = xQueueCreate(MAX_UDPS_RECEIVERS, sizeof(stream_receiver_addr_t));
 
     if (xQueue == NULL)
     {

@@ -33,6 +33,8 @@
 #include "udp_streamer_handler_sender.h"
 #include "udp_streamer_handler_types.h"
 
+#define CONFIG_CAMERA_SENDER_PORT 5002
+
 static const char *TAG = "UDP_STREAMER_CAMERA_COMPONENT_SENDER";
 
 extern QueueHandle_t xQueue;
@@ -141,7 +143,7 @@ void udp_streamer_camera_sender_task(void *pvParameters)
         struct sockaddr_in dest_addr;
         dest_addr.sin_addr = receiver_addr.stream_receiver_ip;
         dest_addr.sin_family = AF_INET;
-        dest_addr.sin_port = receiver_addr.stream_receiver_port;
+        dest_addr.sin_port = htons(CONFIG_CAMERA_SENDER_PORT);
 
         while (1)
         {
@@ -153,8 +155,7 @@ void udp_streamer_camera_sender_task(void *pvParameters)
             }
 
             inet_ntoa_r(receiver_addr.stream_receiver_ip, addr_str, sizeof(addr_str) - 1);
-            int host_port = ntohs(receiver_addr.stream_receiver_port);
-            ESP_LOGI(TAG, "Socket created, sending to %s:%d", addr_str, host_port);
+            ESP_LOGI(TAG, "Socket created, sending to %s:%d", addr_str, CONFIG_CAMERA_SENDER_PORT);
 
             process_sender_connection(sock, &dest_addr);
 
