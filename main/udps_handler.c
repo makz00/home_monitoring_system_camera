@@ -7,7 +7,7 @@
 #include "esp_err.h"
 
 #include "camera_utilities.h"
-#include "streamer_camera.h"
+#include "camera/streamer_camera.h"
 #include "udps_handler.h"
 
 #define CONFIG_STREAMER_STACK_SIZE 4096
@@ -30,7 +30,7 @@
 static const char *TAG = "STREAMER_HANDLER";
 
 esp_err_t udps_camera_init(){
-    streamer_config_t streamer_config = {
+    streamer_camera_config_t streamer_config = {
         .data_send_task_info = {
             .stack_size = CONFIG_STREAMER_STACK_SIZE,
             .task_prio = CONFIG_STREAMER_PRIORITY,
