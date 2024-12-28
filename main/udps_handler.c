@@ -3,15 +3,6 @@
  * Author: Maksymilian Komarnicki
  */
 
-/*
- * ASSUMPTIONS BEG --------------------------------------------------------------------------------
- * ASSUMPTIONS END --------------------------------------------------------------------------------
- *
- * TODO BEG ---------------------------------------------------------------------------------------
- * - Configuration options to add in 'menuconfig'/Kconfig file
- * TODO END ---------------------------------------------------------------------------------------
- */
-
 #include "esp_log.h"
 #include "esp_err.h"
 
@@ -27,11 +18,9 @@
 
 #define CONFIG_STREAMER_MDNS_SERVER_NAME "central_server"
 
-// Streamer-protocol settings
 #define CONFIG_STREAMER_FPS 15
 #define CONFIG_STREAMER_FRAME_MAX_LENGTH (100 * 1014)
 
-// Streamer-camera settings
 #define CONFIG_STREAMER_CAMERA_PIXFORMAT STREAMER_PIXFORMAT_JPEG
 #define CONFIG_STREAMER_CAMERA_FRAMESIZE STREAMER_FRAMESIZE_CIF
 #define CONFIG_STREAMER_CAMERA_GRAB_MODE STREAMER_GRAB_WHEN_EMPTY
@@ -78,7 +67,7 @@ esp_err_t udps_camera_init(){
 
     esp_err_t err = streamer_camera_init(&streamer_config);
     if (err != ESP_OK) {
-        ESP_LOGE(TAG, "UDP streamer handler camera Init Failed");
+        ESP_LOGE(TAG, "UDP streamer handler camera initalization failed");
         return err;
     }
 

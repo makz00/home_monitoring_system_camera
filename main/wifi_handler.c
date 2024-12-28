@@ -3,22 +3,8 @@
  * Author: Maksymilian Komarnicki
  */
 
-/*
- * ASSUMPTIONS BEG --------------------------------------------------------------------------------
- * ASSUMPTIONS END --------------------------------------------------------------------------------
- *
- * TODO BEG ---------------------------------------------------------------------------------------
- * 1. Wifi options should be places in Kconfig file. Then user could configure firmware is easier
- *    way
- * 2. Separate options in Kncofing are easy to achive with dedicated component to WiFi
- *    configuration
- * TODO END ---------------------------------------------------------------------------------------
- */
-
 #include "esp_wifi.h"
-
 #include "esp_log.h"
-#include "esp_err.h"
 
 // ============================
 // WiFi credentials options BEG

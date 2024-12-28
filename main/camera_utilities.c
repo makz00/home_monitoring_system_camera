@@ -62,7 +62,6 @@ streamer_pixformat_t transform_to_stream_pixel_format(pixformat_t pixformat)
         return STREAMER_PIXFORMAT_RGB555;
     }
 
-    // How to handle default (???)
     return STREAMER_PIXFORMAT_JPEG;
 }
 
@@ -90,7 +89,6 @@ pixformat_t transform_to_camera_pixel_format(streamer_pixformat_t streamer_pixfo
         return PIXFORMAT_RGB555;
     }
 
-    // How to handle default (???)
     return PIXFORMAT_JPEG;
 }
 
@@ -146,7 +144,6 @@ framesize_t transform_to_camera_frame_size(streamer_framesize_t streamer_framesi
         return FRAMESIZE_INVALID;
     }
 
-    // How to handle default (???)
     return FRAMESIZE_CIF;
 }
 
@@ -160,7 +157,6 @@ camera_grab_mode_t transform_to_camera_grab_mode(streamer_grab_mode_t streamer_g
         return CAMERA_GRAB_LATEST;
     }
 
-    // How to handle default (???)
     return CAMERA_GRAB_WHEN_EMPTY;
 }
 
@@ -199,6 +195,7 @@ void prepare_camera_config(camera_config_t *camera_conf, const streamer_hal_conf
 esp_err_t start_camera(const streamer_hal_config_t *stream_config)
 {
     esp_err_t ret;
+
     camera_config_t camera_config;
     prepare_camera_config(&camera_config, stream_config);
 
@@ -237,7 +234,7 @@ esp_err_t send_camera_frame(stream_fb_t *stream_fb)
     camera_fb_t *camera_fb = esp_camera_fb_get();
     if (camera_fb == NULL)
     {
-        ESP_LOGE(TAG, "Camera Frame Buffer capture failed");
+        ESP_LOGE(TAG, "Camera frame buffer capture failed");
         return ESP_FAIL;
     }
 
