@@ -4,7 +4,6 @@
  */
 
 #include <unistd.h>
-
 #include "esp_log.h"
 #include "nvs_flash.h"
 #include "esp_wifi.h"
@@ -21,14 +20,9 @@ void app_main(void)
     }
 
     ESP_ERROR_CHECK(ret);
-
     ESP_ERROR_CHECK(esp_event_loop_create_default());
-
     ESP_ERROR_CHECK(wifi_init_sta());
-
     ESP_ERROR_CHECK(udps_camera_init());
 
-    while (1) {
-        sleep(5);
-    }
+    while (1) { sleep(5); }
 }

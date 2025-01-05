@@ -11,7 +11,7 @@
 #include "esp_camera.h"
 
 #include "camera_utilities.h"
-#include "streamer_camera.h"
+#include "espfsp_client_push.h"
 
 // ===================
 // Select camera model
@@ -38,129 +38,129 @@
 
 static const char *TAG = "CAMERA_UTILITIES";
 
-streamer_pixformat_t transform_to_stream_pixel_format(pixformat_t pixformat)
+espfsp_pixformat_t transform_to_stream_pixel_format(pixformat_t pixformat)
 {
     switch (pixformat)
     {
     case PIXFORMAT_RGB565:
-        return STREAMER_PIXFORMAT_RGB565;
+        return ESPFSP_PIXFORMAT_RGB565;
     case PIXFORMAT_YUV422:
-        return STREAMER_PIXFORMAT_YUV422;
+        return ESPFSP_PIXFORMAT_YUV422;
     case PIXFORMAT_YUV420:
-        return STREAMER_PIXFORMAT_YUV420;
+        return ESPFSP_PIXFORMAT_YUV420;
     case PIXFORMAT_GRAYSCALE:
-        return STREAMER_PIXFORMAT_GRAYSCALE;
+        return ESPFSP_PIXFORMAT_GRAYSCALE;
     case PIXFORMAT_JPEG:
-        return STREAMER_PIXFORMAT_JPEG;
+        return ESPFSP_PIXFORMAT_JPEG;
     case PIXFORMAT_RGB888:
-        return STREAMER_PIXFORMAT_RGB888;
+        return ESPFSP_PIXFORMAT_RGB888;
     case PIXFORMAT_RAW:
-        return STREAMER_PIXFORMAT_RAW;
+        return ESPFSP_PIXFORMAT_RAW;
     case PIXFORMAT_RGB444:
-        return STREAMER_PIXFORMAT_RGB444;
+        return ESPFSP_PIXFORMAT_RGB444;
     case PIXFORMAT_RGB555:
-        return STREAMER_PIXFORMAT_RGB555;
+        return ESPFSP_PIXFORMAT_RGB555;
     }
 
-    return STREAMER_PIXFORMAT_JPEG;
+    return ESPFSP_PIXFORMAT_JPEG;
 }
 
-pixformat_t transform_to_camera_pixel_format(streamer_pixformat_t streamer_pixformat)
+pixformat_t transform_to_camera_pixel_format(espfsp_pixformat_t streamer_pixformat)
 {
     switch (streamer_pixformat)
     {
-    case STREAMER_PIXFORMAT_RGB565:
+    case ESPFSP_PIXFORMAT_RGB565:
         return PIXFORMAT_RGB565;
-    case STREAMER_PIXFORMAT_YUV422:
+    case ESPFSP_PIXFORMAT_YUV422:
         return PIXFORMAT_YUV422;
-    case STREAMER_PIXFORMAT_YUV420:
+    case ESPFSP_PIXFORMAT_YUV420:
         return PIXFORMAT_YUV420;
-    case STREAMER_PIXFORMAT_GRAYSCALE:
+    case ESPFSP_PIXFORMAT_GRAYSCALE:
         return PIXFORMAT_GRAYSCALE;
-    case STREAMER_PIXFORMAT_JPEG:
+    case ESPFSP_PIXFORMAT_JPEG:
         return PIXFORMAT_JPEG;
-    case STREAMER_PIXFORMAT_RGB888:
+    case ESPFSP_PIXFORMAT_RGB888:
         return PIXFORMAT_RGB888;
-    case STREAMER_PIXFORMAT_RAW:
+    case ESPFSP_PIXFORMAT_RAW:
         return PIXFORMAT_RAW;
-    case STREAMER_PIXFORMAT_RGB444:
+    case ESPFSP_PIXFORMAT_RGB444:
         return PIXFORMAT_RGB444;
-    case STREAMER_PIXFORMAT_RGB555:
+    case ESPFSP_PIXFORMAT_RGB555:
         return PIXFORMAT_RGB555;
     }
 
     return PIXFORMAT_JPEG;
 }
 
-framesize_t transform_to_camera_frame_size(streamer_framesize_t streamer_framesize)
+framesize_t transform_to_camera_frame_size(espfsp_framesize_t streamer_framesize)
 {
     switch (streamer_framesize)
     {
-    case STREAMER_FRAMESIZE_96X96:
+    case ESPFSP_FRAMESIZE_96X96:
         return FRAMESIZE_96X96;
-    case STREAMER_FRAMESIZE_QQVGA:
+    case ESPFSP_FRAMESIZE_QQVGA:
         return FRAMESIZE_QQVGA;
-    case STREAMER_FRAMESIZE_QCIF:
+    case ESPFSP_FRAMESIZE_QCIF:
         return FRAMESIZE_QCIF;
-    case STREAMER_FRAMESIZE_HQVGA:
+    case ESPFSP_FRAMESIZE_HQVGA:
         return FRAMESIZE_HQVGA;
-    case STREAMER_FRAMESIZE_240X240:
+    case ESPFSP_FRAMESIZE_240X240:
         return FRAMESIZE_240X240;
-    case STREAMER_FRAMESIZE_QVGA:
+    case ESPFSP_FRAMESIZE_QVGA:
         return FRAMESIZE_QVGA;
-    case STREAMER_FRAMESIZE_CIF:
+    case ESPFSP_FRAMESIZE_CIF:
         return FRAMESIZE_CIF;
-    case STREAMER_FRAMESIZE_HVGA:
+    case ESPFSP_FRAMESIZE_HVGA:
         return FRAMESIZE_HVGA;
-    case STREAMER_FRAMESIZE_VGA:
+    case ESPFSP_FRAMESIZE_VGA:
         return FRAMESIZE_VGA;
-    case STREAMER_FRAMESIZE_SVGA:
+    case ESPFSP_FRAMESIZE_SVGA:
         return FRAMESIZE_SVGA;
-    case STREAMER_FRAMESIZE_XGA:
+    case ESPFSP_FRAMESIZE_XGA:
         return FRAMESIZE_XGA;
-    case STREAMER_FRAMESIZE_HD:
+    case ESPFSP_FRAMESIZE_HD:
         return FRAMESIZE_HD;
-    case STREAMER_FRAMESIZE_SXGA:
+    case ESPFSP_FRAMESIZE_SXGA:
         return FRAMESIZE_SXGA;
-    case STREAMER_FRAMESIZE_UXGA:
+    case ESPFSP_FRAMESIZE_UXGA:
         return FRAMESIZE_UXGA;
-    case STREAMER_FRAMESIZE_FHD:
+    case ESPFSP_FRAMESIZE_FHD:
         return FRAMESIZE_FHD;
-    case STREAMER_FRAMESIZE_P_HD:
+    case ESPFSP_FRAMESIZE_P_HD:
         return FRAMESIZE_P_HD;
-    case STREAMER_FRAMESIZE_P_3MP:
+    case ESPFSP_FRAMESIZE_P_3MP:
         return FRAMESIZE_P_3MP;
-    case STREAMER_FRAMESIZE_QXGA:
+    case ESPFSP_FRAMESIZE_QXGA:
         return FRAMESIZE_QXGA;
-    case STREAMER_FRAMESIZE_QHD:
+    case ESPFSP_FRAMESIZE_QHD:
         return FRAMESIZE_QHD;
-    case STREAMER_FRAMESIZE_WQXGA:
+    case ESPFSP_FRAMESIZE_WQXGA:
         return FRAMESIZE_WQXGA;
-    case STREAMER_FRAMESIZE_P_FHD:
+    case ESPFSP_FRAMESIZE_P_FHD:
         return FRAMESIZE_P_FHD;
-    case STREAMER_FRAMESIZE_QSXGA:
+    case ESPFSP_FRAMESIZE_QSXGA:
         return FRAMESIZE_QSXGA;
-    case STREAMER_FRAMESIZE_INVALID:
+    case ESPFSP_FRAMESIZE_INVALID:
         return FRAMESIZE_INVALID;
     }
 
     return FRAMESIZE_CIF;
 }
 
-camera_grab_mode_t transform_to_camera_grab_mode(streamer_grab_mode_t streamer_grabmode)
+camera_grab_mode_t transform_to_camera_grab_mode(espfsp_grab_mode_t streamer_grabmode)
 {
     switch (streamer_grabmode)
     {
-    case STREAMER_GRAB_WHEN_EMPTY:
+    case ESPFSP_GRAB_WHEN_EMPTY:
         return CAMERA_GRAB_WHEN_EMPTY;
-    case STREAMER_GRAB_LATEST:
+    case ESPFSP_GRAB_LATEST:
         return CAMERA_GRAB_LATEST;
     }
 
     return CAMERA_GRAB_WHEN_EMPTY;
 }
 
-void prepare_camera_config(camera_config_t *camera_conf, const streamer_hal_config_t *stream_conf)
+void prepare_camera_config(camera_config_t *camera_conf, const espfsp_cam_config_t *cam_config, const espfsp_frame_config_t *frame_config)
 {
     camera_conf->pin_pwdn = PWDN_GPIO_NUM;
     camera_conf->pin_reset = RESET_GPIO_NUM;
@@ -184,20 +184,20 @@ void prepare_camera_config(camera_config_t *camera_conf, const streamer_hal_conf
     camera_conf->ledc_timer = LEDC_TIMER_0;
     camera_conf->ledc_channel = LEDC_CHANNEL_0;
 
-    camera_conf->pixel_format = transform_to_camera_pixel_format(stream_conf->pixel_format);
-    camera_conf->frame_size = transform_to_camera_frame_size(stream_conf->frame_size);
+    camera_conf->pixel_format = transform_to_camera_pixel_format(frame_config->pixel_format);
+    camera_conf->frame_size = transform_to_camera_frame_size(frame_config->frame_size);
 
-    camera_conf->jpeg_quality = stream_conf->jpeg_quality;
-    camera_conf->fb_count = (size_t)stream_conf->fb_count;
-    camera_conf->grab_mode = transform_to_camera_grab_mode(stream_conf->grab_mode);
+    camera_conf->jpeg_quality = cam_config->cam_jpeg_quality;
+    camera_conf->fb_count = (size_t) cam_config->cam_fb_count;
+    camera_conf->grab_mode = transform_to_camera_grab_mode(cam_config->cam_grab_mode);
 }
 
-esp_err_t start_camera(const streamer_hal_config_t *stream_config)
+esp_err_t start_camera(const espfsp_cam_config_t *cam_config, const espfsp_frame_config_t *frame_config)
 {
-    esp_err_t ret;
+    esp_err_t ret = ESP_OK;
 
     camera_config_t camera_config;
-    prepare_camera_config(&camera_config, stream_config);
+    prepare_camera_config(&camera_config, cam_config, frame_config);
 
     if (PWDN_GPIO_NUM != -1)
     {
@@ -217,7 +217,7 @@ esp_err_t start_camera(const streamer_hal_config_t *stream_config)
 
 esp_err_t stop_camera()
 {
-    esp_err_t ret;
+    esp_err_t ret = ESP_OK;
 
     ret = esp_camera_deinit();
     if (ret != ESP_OK)
@@ -229,7 +229,7 @@ esp_err_t stop_camera()
     return ESP_OK;
 }
 
-esp_err_t send_camera_frame(stream_fb_t *stream_fb)
+esp_err_t send_camera_frame(espfsp_fb_t *fb)
 {
     camera_fb_t *camera_fb = esp_camera_fb_get();
     if (camera_fb == NULL)
@@ -238,15 +238,25 @@ esp_err_t send_camera_frame(stream_fb_t *stream_fb)
         return ESP_FAIL;
     }
 
-    stream_fb->len = (int)camera_fb->len;
-    stream_fb->width = (int)camera_fb->width;
-    stream_fb->height = (int)camera_fb->height;
-    stream_fb->format = transform_to_stream_pixel_format(camera_fb->format);
-    stream_fb->timestamp.tv_sec = camera_fb->timestamp.tv_sec;
-    stream_fb->timestamp.tv_usec = camera_fb->timestamp.tv_usec;
+    fb->len = (int) camera_fb->len;
+    fb->width = (int) camera_fb->width;
+    fb->height = (int) camera_fb->height;
+    fb->format = transform_to_stream_pixel_format(camera_fb->format);
+    fb->timestamp.tv_sec = camera_fb->timestamp.tv_sec;
+    fb->timestamp.tv_usec = camera_fb->timestamp.tv_usec;
 
-    memcpy(stream_fb->buf, camera_fb->buf, camera_fb->len);
+    memcpy(fb->buf, camera_fb->buf, camera_fb->len);
     esp_camera_fb_return(camera_fb);
 
     return ESP_OK;
+}
+
+esp_err_t reconf_camera(const espfsp_cam_config_t *cam_config)
+{
+    return ESP_FAIL;
+}
+
+esp_err_t reconf_frame(const espfsp_frame_config_t *frame_config)
+{
+    return ESP_FAIL;
 }
