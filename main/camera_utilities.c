@@ -62,6 +62,7 @@ espfsp_pixformat_t transform_to_stream_pixel_format(pixformat_t pixformat)
         return ESPFSP_PIXFORMAT_RGB555;
     }
 
+    ESP_LOGE(TAG, "Not handled camera pixformat. Return jpeg by default");
     return ESPFSP_PIXFORMAT_JPEG;
 }
 
@@ -89,6 +90,7 @@ pixformat_t transform_to_camera_pixel_format(espfsp_pixformat_t streamer_pixform
         return PIXFORMAT_RGB555;
     }
 
+    ESP_LOGE(TAG, "Not handled espfsp pixformat. Return jpeg by default");
     return PIXFORMAT_JPEG;
 }
 
@@ -144,6 +146,7 @@ framesize_t transform_to_camera_frame_size(espfsp_framesize_t streamer_framesize
         return FRAMESIZE_INVALID;
     }
 
+    ESP_LOGE(TAG, "Not handled espfsp framesize. Return cif by default");
     return FRAMESIZE_CIF;
 }
 
@@ -157,6 +160,7 @@ camera_grab_mode_t transform_to_camera_grab_mode(espfsp_grab_mode_t streamer_gra
         return CAMERA_GRAB_LATEST;
     }
 
+    ESP_LOGE(TAG, "Not handled espfsp camera grab mode. Return 'grab when empty' by default");
     return CAMERA_GRAB_WHEN_EMPTY;
 }
 
@@ -253,10 +257,64 @@ esp_err_t send_camera_frame(espfsp_fb_t *fb)
 
 esp_err_t reconf_camera(const espfsp_cam_config_t *cam_config)
 {
-    return ESP_FAIL;
+    esp_err_t ret = ESP_OK;
+
+    sensor_t *s = esp_camera_sensor_get();
+    if (s == NULL)
+    {
+        ret = ESP_FAIL;
+        ESP_LOGE(TAG, "Camera get sensor failed");
+    }
+    if (ret == ESP_OK)
+    {
+        int res = 0;
+        int quality = cam_config->cam_jpeg_quality > 63 ?
+                        63 :
+                        cam_config->cam_jpeg_quality < 0 ?
+                            0 :
+                            cam_config->cam_jpeg_quality;
+
+        res = s->set_quality(s, quality);
+        if (res < 0)
+        {
+            ret = ESP_FAIL;
+            ESP_LOGE(TAG, "Camera set quality failed");
+        }
+    }
+
+    return ret;
 }
 
 esp_err_t reconf_frame(const espfsp_frame_config_t *frame_config)
 {
-    return ESP_FAIL;
+    esp_err_t ret = ESP_OK;
+
+    sensor_t *s = esp_camera_sensor_get();
+    if (s == NULL)
+    {
+        ret = ESP_FAIL;
+        ESP_LOGE(TAG, "Camera get sensor failed");
+    }
+    if (ret == ESP_OK)
+    {
+        int res = 0;
+
+        pixformat_t pixformat = transform_to_camera_pixel_format(frame_config->pixel_format);
+        framesize_t framesize = transform_to_camera_frame_size(frame_config->frame_size);
+
+        res = s->set_pixformat(s, pixformat);
+        if (res < 0)
+        {
+            ret = ESP_FAIL;
+            ESP_LOGE(TAG, "Camera set pixel format failed");
+        }
+        res = s->set_framesize(s, framesize);
+        if (res < 0)
+        {
+            ret = ESP_FAIL;
+            ESP_LOGE(TAG, "Camera set frame size failed");
+        }
+    }
+
+    return ret;
 }
