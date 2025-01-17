@@ -67,7 +67,6 @@ esp_err_t udps_camera_init(){
     {
         return ret;
     }
-
     espfsp_client_push_config_t streamer_config = {
         .data_task_info = {
             .stack_size = CONFIG_STREAMER_STACK_SIZE,
@@ -92,20 +91,28 @@ esp_err_t udps_camera_init(){
             .stop_cam = stop_camera,
             .send_frame = send_camera_frame,
             .reconf_cam = reconf_camera,
-            .reconf_frame = reconf_frame,
         },
         .frame_config = {
-            .pixel_format = CONFIG_STREAMER_CAMERA_PIXFORMAT,
-            .frame_size = CONFIG_STREAMER_CAMERA_FRAMESIZE,
             .frame_max_len = CONFIG_STREAMER_FRAME_MAX_LENGTH,
-            .fps = CONFIG_STREAMER_FPS,
+            .fps = 0, // Not needed
+            .buffered_fbs = 0, // Not needed
+            .fb_in_buffer_before_get = 0, // Not needed
         },
         .cam_config = {
             .cam_grab_mode = CONFIG_STREAMER_CAMERA_GRAB_MODE,
             .cam_jpeg_quality = CONFIG_STREAMER_CAMERA_JPEG_QUALITY,
             .cam_fb_count = CONFIG_STREAMER_CAMERA_FB_COUNT,
+            .cam_pixel_format = CONFIG_STREAMER_CAMERA_PIXFORMAT,
+            .cam_frame_size = CONFIG_STREAMER_CAMERA_FRAMESIZE,
         }
     };
+
+    ret = init_config(&streamer_config.cam_config, &streamer_config.frame_config);
+    if (ret != ESP_OK)
+    {
+        ESP_LOGE(TAG, "Camera init failed");
+        return ret;
+    }
 
     client_push_handler = espfsp_client_push_init(&streamer_config);
     if (client_push_handler == NULL) {

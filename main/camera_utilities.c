@@ -164,7 +164,7 @@ camera_grab_mode_t transform_to_camera_grab_mode(espfsp_grab_mode_t streamer_gra
     return CAMERA_GRAB_WHEN_EMPTY;
 }
 
-void prepare_camera_config(camera_config_t *camera_conf, const espfsp_cam_config_t *cam_config, const espfsp_frame_config_t *frame_config)
+void prepare_camera_config(camera_config_t *camera_conf, const espfsp_cam_config_t *cam_config)
 {
     camera_conf->pin_pwdn = PWDN_GPIO_NUM;
     camera_conf->pin_reset = RESET_GPIO_NUM;
@@ -188,53 +188,56 @@ void prepare_camera_config(camera_config_t *camera_conf, const espfsp_cam_config
     camera_conf->ledc_timer = LEDC_TIMER_0;
     camera_conf->ledc_channel = LEDC_CHANNEL_0;
 
-    camera_conf->pixel_format = transform_to_camera_pixel_format(frame_config->pixel_format);
-    camera_conf->frame_size = transform_to_camera_frame_size(frame_config->frame_size);
+    camera_conf->pixel_format = transform_to_camera_pixel_format(cam_config->cam_pixel_format);
+    camera_conf->frame_size = transform_to_camera_frame_size(cam_config->cam_frame_size);
 
     camera_conf->jpeg_quality = cam_config->cam_jpeg_quality;
     camera_conf->fb_count = (size_t) cam_config->cam_fb_count;
     camera_conf->grab_mode = transform_to_camera_grab_mode(cam_config->cam_grab_mode);
 }
 
-esp_err_t start_camera(const espfsp_cam_config_t *cam_config, const espfsp_frame_config_t *frame_config)
+esp_err_t init_config(const espfsp_cam_config_t *cam_config, const espfsp_frame_config_t *frame_config)
 {
     esp_err_t ret = ESP_OK;
 
-    camera_config_t camera_config;
-    prepare_camera_config(&camera_config, cam_config, frame_config);
-
-    if (PWDN_GPIO_NUM != -1)
+    static bool config_done = false;
+    if (!config_done)
     {
-        gpio_set_direction(PWDN_GPIO_NUM, GPIO_MODE_OUTPUT);
-        gpio_set_level(PWDN_GPIO_NUM, 0);
+        if (PWDN_GPIO_NUM != -1)
+        {
+            gpio_set_direction(PWDN_GPIO_NUM, GPIO_MODE_OUTPUT);
+            gpio_set_level(PWDN_GPIO_NUM, 0);
+        }
+        config_done = true;
+
+        camera_config_t camera_config;
+        prepare_camera_config(&camera_config, cam_config);
+
+        ret = esp_camera_init(&camera_config);
+        if (ret != ESP_OK)
+        {
+            ESP_LOGE(TAG, "Camera initialization failed");
+            return ret;
+        }
     }
 
-    ret = esp_camera_init(&camera_config);
-    if (ret != ESP_OK)
-    {
-        ESP_LOGE(TAG, "Camera initialization failed");
-        return ret;
-    }
+    return ret;
+}
 
+esp_err_t start_camera(const espfsp_cam_config_t *cam_config, const espfsp_frame_config_t *frame_config)
+{
     return ESP_OK;
 }
 
 esp_err_t stop_camera()
 {
-    esp_err_t ret = ESP_OK;
-
-    ret = esp_camera_deinit();
-    if (ret != ESP_OK)
-    {
-        ESP_LOGE(TAG, "Camera deinitialization failed");
-        return ret;
-    }
-
     return ESP_OK;
 }
 
-esp_err_t send_camera_frame(espfsp_fb_t *fb)
+esp_err_t send_camera_frame(espfsp_fb_t *fb, espfsp_send_frame_cb_state_t *state)
 {
+    *state = ESPFSP_SEND_FRAME_CB_FRAME_NOT_OBTAINED;
+
     camera_fb_t *camera_fb = esp_camera_fb_get();
     if (camera_fb == NULL)
     {
@@ -251,6 +254,8 @@ esp_err_t send_camera_frame(espfsp_fb_t *fb)
 
     memcpy(fb->buf, camera_fb->buf, camera_fb->len);
     esp_camera_fb_return(camera_fb);
+
+    *state = ESPFSP_SEND_FRAME_CB_FRAME_OBTAINED;
 
     return ESP_OK;
 }
@@ -280,27 +285,8 @@ esp_err_t reconf_camera(const espfsp_cam_config_t *cam_config)
             ret = ESP_FAIL;
             ESP_LOGE(TAG, "Camera set quality failed");
         }
-    }
-
-    return ret;
-}
-
-esp_err_t reconf_frame(const espfsp_frame_config_t *frame_config)
-{
-    esp_err_t ret = ESP_OK;
-
-    sensor_t *s = esp_camera_sensor_get();
-    if (s == NULL)
-    {
-        ret = ESP_FAIL;
-        ESP_LOGE(TAG, "Camera get sensor failed");
-    }
-    if (ret == ESP_OK)
-    {
-        int res = 0;
-
-        pixformat_t pixformat = transform_to_camera_pixel_format(frame_config->pixel_format);
-        framesize_t framesize = transform_to_camera_frame_size(frame_config->frame_size);
+        pixformat_t pixformat = transform_to_camera_pixel_format(cam_config->cam_pixel_format);
+        framesize_t framesize = transform_to_camera_frame_size(cam_config->cam_frame_size);
 
         res = s->set_pixformat(s, pixformat);
         if (res < 0)
