@@ -7,10 +7,11 @@
 #include "esp_err.h"
 
 #include "mdns.h"
+#include "freertos/FreeRTOS.h"
+#include "freertos/task.h"
 
 #include "camera_utilities.h"
 #include "espfsp_client_push.h"
-
 #include "udps_handler.h"
 
 #define CONFIG_STREAMER_STACK_SIZE 4096
@@ -21,12 +22,12 @@
 
 #define CONFIG_STREAMER_CAMERA_PIXFORMAT ESPFSP_PIXFORMAT_JPEG
 #define CONFIG_STREAMER_CAMERA_FRAMESIZE ESPFSP_FRAMESIZE_CIF
-#define CONFIG_STREAMER_FRAME_MAX_LENGTH (100 * 1014)
-#define CONFIG_STREAMER_FPS 15
-
 #define CONFIG_STREAMER_CAMERA_GRAB_MODE ESPFSP_GRAB_WHEN_EMPTY
 #define CONFIG_STREAMER_CAMERA_JPEG_QUALITY 6
 #define CONFIG_STREAMER_CAMERA_FB_COUNT 2
+
+#define CONFIG_STREAMER_FRAME_MAX_LENGTH (100 * 1014)
+#define CONFIG_STREAMER_FPS 15
 
 #define CONFIG_STREAMER_MDNS_SERVER_NAME "espfsp_server"
 
@@ -61,12 +62,14 @@ static esp_err_t resolve_mdns_host(const char * host_name, struct esp_ip4_addr *
 }
 
 esp_err_t udps_camera_init(){
+    esp_err_t ret = ESP_OK;
+
     struct esp_ip4_addr server_addr;
-    esp_err_t ret = resolve_mdns_host(CONFIG_STREAMER_MDNS_SERVER_NAME, &server_addr);
-    if (ret != ESP_OK)
+    while (resolve_mdns_host(CONFIG_STREAMER_MDNS_SERVER_NAME, &server_addr) != ESP_OK)
     {
-        return ret;
+        vTaskDelay(10000 / portTICK_PERIOD_MS);
     }
+
     espfsp_client_push_config_t streamer_config = {
         .data_task_info = {
             .stack_size = CONFIG_STREAMER_STACK_SIZE,
@@ -94,9 +97,9 @@ esp_err_t udps_camera_init(){
         },
         .frame_config = {
             .frame_max_len = CONFIG_STREAMER_FRAME_MAX_LENGTH,
-            .fps = 0, // Not needed
-            .buffered_fbs = 0, // Not needed
-            .fb_in_buffer_before_get = 0, // Not needed
+            .fps = CONFIG_STREAMER_FPS,
+            .buffered_fbs = 1,              // Not needed as there is no buffering
+            .fb_in_buffer_before_get = 1,   // Not needed as there is no buffering
         },
         .cam_config = {
             .cam_grab_mode = CONFIG_STREAMER_CAMERA_GRAB_MODE,

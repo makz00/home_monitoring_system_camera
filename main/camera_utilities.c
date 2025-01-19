@@ -62,7 +62,7 @@ espfsp_pixformat_t transform_to_stream_pixel_format(pixformat_t pixformat)
         return ESPFSP_PIXFORMAT_RGB555;
     }
 
-    ESP_LOGE(TAG, "Not handled camera pixformat. Return jpeg by default");
+    ESP_LOGE(TAG, "Not handled camera pixformat. Return JPEG by default.");
     return ESPFSP_PIXFORMAT_JPEG;
 }
 
@@ -90,7 +90,7 @@ pixformat_t transform_to_camera_pixel_format(espfsp_pixformat_t streamer_pixform
         return PIXFORMAT_RGB555;
     }
 
-    ESP_LOGE(TAG, "Not handled espfsp pixformat. Return jpeg by default");
+    ESP_LOGE(TAG, "Not handled espfsp pixformat. Return JPEG by default.");
     return PIXFORMAT_JPEG;
 }
 
@@ -146,7 +146,7 @@ framesize_t transform_to_camera_frame_size(espfsp_framesize_t streamer_framesize
         return FRAMESIZE_INVALID;
     }
 
-    ESP_LOGE(TAG, "Not handled espfsp framesize. Return cif by default");
+    ESP_LOGE(TAG, "Not handled espfsp framesize. Return CIF by default.");
     return FRAMESIZE_CIF;
 }
 
@@ -160,7 +160,7 @@ camera_grab_mode_t transform_to_camera_grab_mode(espfsp_grab_mode_t streamer_gra
         return CAMERA_GRAB_LATEST;
     }
 
-    ESP_LOGE(TAG, "Not handled espfsp camera grab mode. Return 'grab when empty' by default");
+    ESP_LOGE(TAG, "Not handled espfsp camera grab mode. Return 'grab when empty' by default.");
     return CAMERA_GRAB_WHEN_EMPTY;
 }
 
