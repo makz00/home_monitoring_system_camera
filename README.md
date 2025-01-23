@@ -39,6 +39,6 @@ The camera module is designed to provide core functionality for the monitoring s
 
 Maksymilian Komarnicki – [GitHub](https://github.com/makz00).
 
-## Licencja
+## License
 
 ...
