@@ -14,7 +14,7 @@
 #include "espfsp_client_push.h"
 #include "udps_handler.h"
 
-#define CONFIG_STREAMER_STACK_SIZE 4096
+#define CONFIG_STREAMER_STACK_SIZE 8096
 #define CONFIG_STREAMER_PRIORITY 5
 
 #define CONFIG_STREAMER_PORT_CONTROL 5001

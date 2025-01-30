@@ -234,15 +234,22 @@ esp_err_t stop_camera()
     return ESP_OK;
 }
 
-esp_err_t send_camera_frame(espfsp_fb_t *fb, espfsp_send_frame_cb_state_t *state)
+esp_err_t send_camera_frame(espfsp_fb_t *fb, espfsp_send_frame_cb_state_t *state, uint32_t max_allowed_size)
 {
     *state = ESPFSP_SEND_FRAME_CB_FRAME_NOT_OBTAINED;
 
     camera_fb_t *camera_fb = esp_camera_fb_get();
     if (camera_fb == NULL)
     {
-        ESP_LOGE(TAG, "Camera frame buffer capture failed");
-        return ESP_FAIL;
+        ESP_LOGW(TAG, "Camera frame buffer capture failed");
+        return ESP_OK;
+    }
+
+    if (camera_fb->len > max_allowed_size)
+    {
+        ESP_LOGW(TAG, "Size of FB exceeded allowed FB size");
+        esp_camera_fb_return(camera_fb);
+        return ESP_OK;
     }
 
     fb->len = (int) camera_fb->len;
@@ -253,9 +260,9 @@ esp_err_t send_camera_frame(espfsp_fb_t *fb, espfsp_send_frame_cb_state_t *state
     fb->timestamp.tv_usec = camera_fb->timestamp.tv_usec;
 
     memcpy(fb->buf, camera_fb->buf, camera_fb->len);
-    esp_camera_fb_return(camera_fb);
-
     *state = ESPFSP_SEND_FRAME_CB_FRAME_OBTAINED;
+
+    esp_camera_fb_return(camera_fb);
 
     return ESP_OK;
 }
